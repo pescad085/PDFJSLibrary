@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> PDF JS Library </title>
+    <style>
+        #pdf-container {
+            margin-left: auto;
+            margin-right: auto;
+            width: 900px;
+        }
+        body {
+            background-color: #000;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
+
+</head>
+
+<body>
+
+    <div id="pdf-container">
+
+    </div>
+
+
+    <script>
+        // Add the link to your PDF FILE.
+        const pdfUrl = 'book.pdf';
+
+        // Get the container element
+        const container = document.getElementById('pdf-container');
+
+        // Load PDF document
+        pdfjsLib.getDocument(pdfUrl).promise.then(pdfDoc => {
+            // This for loop, loops through all of the pages and loads the doc
+            for (let pageNum = 1; pageNum <= pdfDoc.numPages; pageNum++) {
+                pdfDoc.getPage(pageNum).then(page => {
+                    // Create a viewport to render the PDF page. The higher number you add to the scale, the bigger the pdf file will look.
+                    const viewport = page.getViewport({ scale: 1.5 });
+
+                    // Set the dimensions of the container to match the PDF page
+                    container.style.width = viewport.width + 'px';
+                    container.style.height = viewport.height + 'px';
+
+                    // Prepare the canvas element to render the PDF page
+                    const canvas = document.createElement('canvas');
+                    container.appendChild(canvas);
+
+                    // Set the canvas dimensions
+                    canvas.width = viewport.width;
+                    canvas.height = viewport.height;
+
+                    // Render the PDF page on the canvas
+                    const renderContext = {
+                        canvasContext: canvas.getContext('2d'),
+                        viewport: viewport,
+                    };
+                    page.render(renderContext);
+                });
+            }
+        });
+    </script>
+
+</body>
+
+</html>
